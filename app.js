@@ -1,7 +1,7 @@
-require(`./src/db/`);
+require(`./db`);
 const express = require("express");
-require("dotenv/config");
+require('dotenv').config()
 const app = express();
-require("./src/config")(app);
+require("./config")(app);
 
 module.exports = app;
