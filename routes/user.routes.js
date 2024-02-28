@@ -8,6 +8,7 @@ router.put("/users/:id", async (req, res) => {
     const userId = req.params.id;
     const updates = req.body;
 
+    updates.updatedOn = Date.now();
     const updatedUser = await User.findByIdAndUpdate(userId, updates, {
       new: true,
     });

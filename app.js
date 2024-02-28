@@ -6,7 +6,7 @@ require("./config")(app);
 const addressRouter = require("./routes/address.routes");
 const userRouter = require("./routes/user.routes");
 
-app.use("/user-addresses", addressRouter);
+app.use("/api", addressRouter);
 app.use("/api", userRouter);
 
 const authRouter = require("./routes/auth.routes");
