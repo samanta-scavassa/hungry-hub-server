@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcryptjs");
 const User = require("../models/User.model");
 
 // Update User Endpoint
@@ -58,6 +59,31 @@ router.get("/users/:id", async (req, res) => {
 
     res.json(user);
   } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+//update user password
+router.patch("/users/:id/password", async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { password } = req.body;
+    const saltRounds = 10;
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hashedPassword = bcrypt.hashSync(password, salt);
+
+    const updatedOn = Date.now();
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { password: hashedPassword, updatedOn },
+      {
+        new: true,
+      }
+    );
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.log(error);
     res.status(400).json({ message: error.message });
   }
 });
