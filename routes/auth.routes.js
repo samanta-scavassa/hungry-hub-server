@@ -9,12 +9,12 @@ const { isAuthenticated } = require("../middlewares/jwt.middleware");
 const saltRounds = 10;
 
 router.post("/signup", (req, res, next) => {
-  const { email, password, name, phoneNumber, dateOfBirth } = req.body;
+  const { email, password, fullName, phoneNumber, dateOfBirth } = req.body;
 
   if (
     email === "" ||
     password === "" ||
-    name === "" ||
+    fullName === "" ||
     phoneNumber === "" ||
     dateOfBirth === ""
   ) {
@@ -43,7 +43,7 @@ router.post("/signup", (req, res, next) => {
     /(\(?([\d \-\)\–\+\/\(]+){6,}\)?([ .\-–\/]?)([\d]+))/;
   if (!germanNumberRegex.test(phoneNumber)) {
     res.status(400).json({
-      message: "Phone number must have be a valid german phone number.",
+      message: "Phone number must be a valid german phone number.",
     });
     return;
   }
@@ -57,13 +57,9 @@ router.post("/signup", (req, res, next) => {
 
       const salt = bcrypt.genSaltSync(saltRounds);
       const hashedPassword = bcrypt.hashSync(password, salt);
-
-      const firstName = name.split(" ")[0];
-      const lastName = name.split(" ")[1];
       const customerRoleId = "65de3d32f96753f2845107c5";
       return User.create({
-        name: firstName,
-        lastName,
+        fullName,
         email,
         phoneNumber,
         dateOfBirth,
@@ -72,10 +68,9 @@ router.post("/signup", (req, res, next) => {
       });
     })
     .then((createdUser) => {
-      const { email, name, lastName, phoneNumber, dateOfBirth, _id } =
-        createdUser;
+      const { email, fullName, phoneNumber, dateOfBirth, _id } = createdUser;
 
-      const user = { email, name, lastName, phoneNumber, dateOfBirth, _id };
+      const user = { email, fullName, phoneNumber, dateOfBirth, _id };
 
       res.status(201).json({ user: user });
     })
@@ -103,9 +98,9 @@ router.post("/login", (req, res, next) => {
       const passwordCorrect = bcrypt.compareSync(password, foundUser.password);
 
       if (passwordCorrect) {
-        const { _id, email, name } = foundUser;
+        const { _id, email, fullName, phoneNumber, dateOfBirth } = foundUser;
 
-        const payload = { _id, email, name };
+        const payload = { _id, email, fullName, phoneNumber, dateOfBirth };
 
         const authToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
           algorithm: "HS256",
