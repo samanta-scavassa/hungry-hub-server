@@ -3,14 +3,10 @@ const Schema = mongoose.Schema;
 
 const restaurantSchema = new Schema({
   name: { type: String, required: true },
-  address: {
-    street: { type: String, required: true },
-    streetNumber: { type: String, required: true },
-    zipCode: { type: String, required: true },
-  },
-  email: { type: String },
-  phoneNumber: { type: String },
-  category: { type: String },
+  addressId: { type: Schema.Types.ObjectId, ref: "Address", required: true },
+  email: { type: String, required: true },
+  phoneNumber: { type: String, required: true },
+  category: { type: String, required: true },
   description: { type: String },
   image: { type: String },
   longitude: { type: Number },
@@ -19,10 +15,8 @@ const restaurantSchema = new Schema({
   createdOn: { type: Date, default: Date.now },
   updatedOn: { type: Date, default: Date.now },
   operatingHours: {
-    type: [
-      {
-        day: {
-          type: String,
+        days: {
+          type: [String],
           enum: [
             "Monday",
             "Tuesday",
@@ -33,10 +27,8 @@ const restaurantSchema = new Schema({
             "Sunday",
           ],
         },
-        openingTime: { type: String },
-        closingTime: { type: String },
-      },
-    ],
+        openingTime: { hour: {type: Number, required: true}, minute:{type: Number, default: 0}},
+        closingTime:  { hour: {type: Number, required: true}, minute:{type: Number, default: 0}},
   },
   reviewsId: [{ type: Schema.Types.ObjectId, ref: "Review" }],
   isActive: { type: Boolean, default: true },
