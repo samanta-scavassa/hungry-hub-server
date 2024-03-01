@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcryptjs");
 const User = require("../models/User.model");
 
 // Update User Endpoint
@@ -32,19 +33,6 @@ router.delete("/users/:id", async (req, res) => {
   }
 });
 
-// Create User Endpoint
-router.post("/users", async (req, res) => {
-  try {
-    const userData = req.body;
-
-    const newUser = await User.create(userData);
-
-    res.status(201).json(newUser);
-  } catch (error) {
-    res.status(400).json({ message: "Error while creating new User" });
-  }
-});
-
 // Get User by ID Endpoint
 router.get("/users/:id", async (req, res) => {
   try {
@@ -58,6 +46,31 @@ router.get("/users/:id", async (req, res) => {
     res.json(user);
   } catch (error) {
     res.status(400).json({ message: "Error while getting the user" });
+  }
+});
+
+//update user password
+router.patch("/users/:id/password", async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { password } = req.body;
+    const saltRounds = 10;
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hashedPassword = bcrypt.hashSync(password, salt);
+
+    const updatedOn = Date.now();
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { password: hashedPassword, updatedOn },
+      {
+        new: true,
+      }
+    );
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
   }
 });
 
