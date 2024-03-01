@@ -17,9 +17,33 @@ router.get("/restaurants", async (req, res) => {
   }
 });
 
+//get Restaurant by operating hours
+router.get("/restaurants/operating-hours", async (req, res) => {
+  try {
+    console.log(req.query);
+    const { day, openingHour, closingHour } = req.query;
+
+    console.log(day, openingHour, closingHour);
+    const restaurants = await Restaurant.find({
+      $and: [
+        { "operatingHours.days": { $in: [day] } },
+        { "operatingHours.openingTime.hour": { $gte: openingHour } },
+        { "operatingHours.closingTime.hour": { $lte: closingHour } },
+      ],
+    });
+
+    console.log(restaurants);
+    res.json(restaurants);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 //get Restaurant by id Endpoint
 router.get("/restaurants/:id", async (req, res) => {
   try {
+    console.log("test");
     const restaurantId = req.params.id;
 
     const restaurant = await Restaurant.findById(restaurantId);
@@ -34,43 +58,19 @@ router.get("/restaurants/:id", async (req, res) => {
 });
 
 //get Restaurant by category Endpoint
-router.get("/restaurants/:category", async (req, res) => {
+router.get("/restaurants/category/:category", async (req, res) => {
   try {
-    const { categoryId } = req.params;
+    const category = req.params.category;
 
-    const restaurants = await Restaurant.find(categoryId);
+    const restaurants = await Restaurant.find({ category });
 
     if (!restaurants) {
       return res.status(404).json({ message: "Restaurants not found" });
     }
-    res.json(restaurant);
-  } catch (error) {
-    res.status(400).json({ message: "Error while getting the restaurants" });
-  }
-});
-
-//get Restaurant by operating hours
-router.get("/restaurants/operating-hours", async (req, res) => {
-  try {
-    const { day, time } = req.query;
-
-    const restaurants = await Restaurant.find({
-      operatingHours: {
-        $elemMatch: {
-          $and: [
-            { from: day },
-            { to: day },
-            { openingTime: { $lte: time } },
-            { closingTime: { $gte: time } },
-          ],
-        },
-      },
-    });
-
     res.json(restaurants);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    console.log(error);
+    res.status(400).json({ message: "Error while getting the restaurants" });
   }
 });
 
@@ -85,6 +85,7 @@ router.post("/restaurants", async (req, res) => {
     const newRestaurant = await Restaurant.create(restaurantData);
     res.status(201).json(newRestaurant);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ message: "Error while creating a new Restaurant" });
   }
 });

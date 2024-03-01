@@ -6,7 +6,7 @@ const restaurantSchema = new Schema({
   addressId: { type: Schema.Types.ObjectId, ref: "Address", required: true },
   email: { type: String, required: true },
   phoneNumber: { type: String, required: true },
-  categoryId: { type: String, required: true },
+  category: { type: String, required: true },
   description: { type: String },
   image: { type: String },
   longitude: { type: Number },
@@ -15,10 +15,8 @@ const restaurantSchema = new Schema({
   createdOn: { type: Date, default: Date.now },
   updatedOn: { type: Date, default: Date.now },
   operatingHours: {
-    type: [
-      {
-        from: {
-          type: String,
+        days: {
+          type: [String],
           enum: [
             "Monday",
             "Tuesday",
@@ -29,22 +27,8 @@ const restaurantSchema = new Schema({
             "Sunday",
           ],
         },
-        to: {
-          type: String,
-          enum: [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday",
-          ],
-        },
-        openingTime: { type: String },
-        closingTime: { type: String },
-      },
-    ],
+        openingTime: { hour: {type: Number, required: true}, minute:{type: Number, default: 0}},
+        closingTime:  { hour: {type: Number, required: true}, minute:{type: Number, default: 0}},
   },
   reviewsId: [{ type: Schema.Types.ObjectId, ref: "Review" }],
   isActive: { type: Boolean, default: true },
