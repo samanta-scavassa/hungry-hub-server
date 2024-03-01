@@ -15,7 +15,7 @@ router.put("/users/:id", async (req, res) => {
 
     res.json(updatedUser);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: "Error while updating the user" });
   }
 });
 
@@ -28,20 +28,20 @@ router.delete("/users/:id", async (req, res) => {
 
     res.json({ message: "User deleted successfully" });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: "Error while deleting the user" });
   }
 });
 
 // Create User Endpoint
 router.post("/users", async (req, res) => {
   try {
-    const userData = req.body; // Assuming user data comes in the request body
+    const userData = req.body;
 
     const newUser = await User.create(userData);
 
     res.status(201).json(newUser);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: "Error while creating new User" });
   }
 });
 
@@ -55,10 +55,9 @@ router.get("/users/:id", async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     res.json(user);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: "Error while getting the user" });
   }
 });
 

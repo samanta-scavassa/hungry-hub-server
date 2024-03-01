@@ -3,14 +3,10 @@ const Schema = mongoose.Schema;
 
 const restaurantSchema = new Schema({
   name: { type: String, required: true },
-  address: {
-    street: { type: String, required: true },
-    streetNumber: { type: String, required: true },
-    zipCode: { type: String, required: true },
-  },
-  email: { type: String },
-  phoneNumber: { type: String },
-  category: { type: String },
+  addressId: { type: Schema.Types.ObjectId, ref: "Address", required: true },
+  email: { type: String, required: true },
+  phoneNumber: { type: String, required: true },
+  categoryId: { type: String, required: true },
   description: { type: String },
   image: { type: String },
   longitude: { type: Number },
@@ -21,7 +17,19 @@ const restaurantSchema = new Schema({
   operatingHours: {
     type: [
       {
-        day: {
+        from: {
+          type: String,
+          enum: [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
+          ],
+        },
+        to: {
           type: String,
           enum: [
             "Monday",
