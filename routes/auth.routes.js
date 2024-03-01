@@ -6,6 +6,7 @@ const User = require("../models/User.model");
 
 const router = express.Router();
 const { isAuthenticated } = require("../middlewares/jwt.middleware");
+const { validatePassword, validatePhoneNumber, validateEmail } = require("../utils/validations");
 const saltRounds = 10;
 
 router.post("/signup", (req, res, next) => {
@@ -24,26 +25,20 @@ router.post("/signup", (req, res, next) => {
     return;
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-  if (!emailRegex.test(email)) {
+  if (!validateEmail(email)) {
     res.status(400).json({ message: "Provide a valid email address." });
     return;
   }
-
-  const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
-  if (!passwordRegex.test(password)) {
+  if (!validatePhoneNumber(phoneNumber)) {
     res.status(400).json({
-      message:
-        "Password must have at least 6 characters and contain at least one number, one lowercase and one uppercase letter.",
+      message: "Phone number must be a valid german phone number."
     });
     return;
   }
 
-  const germanNumberRegex =
-    /(\(?([\d \-\)\–\+\/\(]+){6,}\)?([ .\-–\/]?)([\d]+))/;
-  if (!germanNumberRegex.test(phoneNumber)) {
+  if (!validatePassword(password)) {
     res.status(400).json({
-      message: "Phone number must be a valid german phone number.",
+      message: "Password must have at least 6 characters and contain at least one number, one lowercase and one uppercase letter.",
     });
     return;
   }

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Restaurant = require("../models/Restaurant.model");
+const { validatePhoneNumber, validateEmail } = require("../utils/validations");
 
 //getting all Restaurants Endpoint
 router.get("/restaurants", async (req, res) => {
@@ -82,6 +83,17 @@ router.get("/restaurants/category/:category", async (req, res) => {
 router.post("/restaurants", async (req, res) => {
   try {
     const restaurantData = req.body;
+    if (!validateEmail(restaurantData.email)) {
+      res.status(400).json({ message: "Provide a valid email address." });
+      return;
+    }
+    if (!validatePhoneNumber(restaurantData.phoneNumber)) {
+      res.status(400).json({
+        message: "Phone number must be a valid german phone number."
+      });
+      return;
+    }
+
     const newRestaurant = await Restaurant.create(restaurantData);
     res.status(201).json(newRestaurant);
   } catch (error) {

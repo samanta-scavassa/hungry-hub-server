@@ -32,19 +32,6 @@ router.delete("/users/:id", async (req, res) => {
   }
 });
 
-// Create User Endpoint
-router.post("/users", async (req, res) => {
-  try {
-    const userData = req.body;
-
-    const newUser = await User.create(userData);
-
-    res.status(201).json(newUser);
-  } catch (error) {
-    res.status(400).json({ message: "Error while creating new User" });
-  }
-});
-
 // Get User by ID Endpoint
 router.get("/users/:id", async (req, res) => {
   try {
