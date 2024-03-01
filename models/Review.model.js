@@ -9,7 +9,7 @@ const reviewSchema = new Schema({
   },
   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   rating: { type: Number, required: true, min: 1, max: 5 },
-  comment: { type: String, required: true, minLength: 20, maxLength: 250 },
+  comment: { type: String, required: true, minLength: 3, maxLength: 250 },
   createdOn: { type: Date, required: true, default: Date.now },
 });
 

@@ -19,12 +19,12 @@ router.put("/reviews/:id", async (req, res) => {
   try {
     const reviewId = req.params.id;
 
-    const uptadedReview = await Review.findByIdAndUpdate(reviewId, req.body, {
+    const updatedReview = await Review.findByIdAndUpdate(reviewId, req.body, {
       new: true,
     });
     res.json(updatedReview);
   } catch (error) {
-    res.status(400).json({ message: "Error while updating the Review" });
+    res.status(500).json({ message: "Error while updating the Review" });
   }
 });
 
@@ -46,10 +46,10 @@ router.get("/reviews/:id", async (req, res) => {
 
 //Get reviews by restaurant
 
-router.get("/reviews/restaurants/:id", async (req, res) => {
+router.get("/reviews/restaurant/:id", async (req, res) => {
   try {
     const restaurantId = req.params.restaurantId;
-    const reviews = await Review.find({ restaurantId });
+    const reviews = await Review.find({ ObjectId: restaurantId });
     res.json(reviews);
   } catch (error) {
     res
