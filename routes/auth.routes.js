@@ -10,7 +10,7 @@ const { validatePassword, validatePhoneNumber, validateEmail } = require("../uti
 const saltRounds = 10;
 
 router.post("/signup", (req, res, next) => {
-  const { email, password, fullName, phoneNumber, dateOfBirth } = req.body;
+  const { email, password, fullName, phoneNumber, dateOfBirth, roleId } = req.body;
 
   if (
     email === "" ||
@@ -52,20 +52,19 @@ router.post("/signup", (req, res, next) => {
 
       const salt = bcrypt.genSaltSync(saltRounds);
       const hashedPassword = bcrypt.hashSync(password, salt);
-      const customerRoleId = "65de3d32f96753f2845107c5";
       return User.create({
         fullName,
         email,
         phoneNumber,
         dateOfBirth,
         password: hashedPassword,
-        roleId: customerRoleId,
+        roleId,
       });
     })
     .then((createdUser) => {
-      const { email, fullName, phoneNumber, dateOfBirth, _id } = createdUser;
+      const { email, fullName, phoneNumber, dateOfBirth, roleId, _id } = createdUser;
 
-      const user = { email, fullName, phoneNumber, dateOfBirth, _id };
+      const user = { email, fullName, phoneNumber, dateOfBirth, roleId, _id };
 
       res.status(201).json({ user: user });
     })
@@ -93,9 +92,9 @@ router.post("/login", (req, res, next) => {
       const passwordCorrect = bcrypt.compareSync(password, foundUser.password);
 
       if (passwordCorrect) {
-        const { _id, email, fullName, phoneNumber, dateOfBirth } = foundUser;
+        const { _id, email, fullName, phoneNumber, dateOfBirth, roleId } = foundUser;
 
-        const payload = { _id, email, fullName, phoneNumber, dateOfBirth };
+        const payload = { _id, email, fullName, phoneNumber, dateOfBirth, roleId };
 
         const authToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
           algorithm: "HS256",
