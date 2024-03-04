@@ -5,9 +5,9 @@ const { validatePhoneNumber, validateEmail } = require("../utils/validations");
 
 //getting all Restaurants Endpoint
 router.get("/restaurants", async (req, res) => {
-  const rating = req.params.rating;
+  // const rating = req.params.rating;
   try {
-    const restaurants = await Restaurant.find({ rating });
+    const restaurants = await Restaurant.find();
 
     if (restaurants.length === 0) {
       return res.status(404).json({ message: "No restaurants found" });
@@ -95,45 +95,6 @@ router.put("/restaurants/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: "Error while updating the restaurant" });
   }
-});
-
-//update Rating
-router.patch("/restaurants/:id/rating", async (req, res) => {
-  const restaurantId = req.params.id;
-  console.log(restaurantId);
-  await Restaurant.findById(restaurantId)
-    .populate("reviewsId")
-    .then((restaurant) => {
-      const reviews = restaurant.reviewsId;
-      let ratingSum = 0;
-      reviews.forEach((review) => {
-        ratingSum += review.rating;
-      });
-      restaurantRating = ratingSum / reviews.length;
-      return restaurantRating;
-    })
-    .then((restaurantRating) => {
-      console.log(restaurantRating);
-      Restaurant.findByIdAndUpdate(restaurantId, { rating: restaurantRating });
-    })
-    .catch((error) => {
-      console.log(error);
-      res
-        .status(400)
-        .json({ message: "Error while retrieving the Restaurant's reviews" });
-    });
-  // try {
-  //   const review = req.body;
-  //   const restaurantId = req.params.id;
-  //   const updatedRating = await Restaurant.findByIdAndUpdate(
-  //     restaurantId,
-  //     rating,
-  //     { new: true }
-  //   );
-  //   res.json(updatedRating);
-  // } catch (error) {
-  //   res.status(400).json({ message: "Could not update the review" });
-  // }
 });
 
 //get Restaurant by Review
