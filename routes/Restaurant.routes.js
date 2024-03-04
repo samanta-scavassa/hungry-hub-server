@@ -7,7 +7,7 @@ const { validatePhoneNumber, validateEmail } = require("../utils/validations");
 router.get("/restaurants", async (req, res) => {
   const rating = req.params.rating;
   try {
-    const restaurants = await Restaurant.find({rating});
+    const restaurants = await Restaurant.find({ rating });
 
     if (restaurants.length === 0) {
       return res.status(404).json({ message: "No restaurants found" });
@@ -76,33 +76,6 @@ router.get("/restaurants/category/:category", async (req, res) => {
   }
 });
 
-//get Restaurant by Location
-
-//get Restaurant by Review
-
-//Create Restaurant Endpoint
-router.post("/restaurants", async (req, res) => {
-  try {
-    const restaurantData = req.body;
-    if (!validateEmail(restaurantData.email)) {
-      res.status(400).json({ message: "Provide a valid email address." });
-      return;
-    }
-    if (!validatePhoneNumber(restaurantData.phoneNumber)) {
-      res.status(400).json({
-        message: "Phone number must be a valid german phone number."
-      });
-      return;
-    }
-
-    const newRestaurant = await Restaurant.create(restaurantData);
-    res.status(201).json(newRestaurant);
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ message: "Error while creating a new Restaurant" });
-  }
-});
-
 // Update Restaurant Endpoint
 router.put("/restaurants/:id", async (req, res) => {
   try {
@@ -121,6 +94,83 @@ router.put("/restaurants/:id", async (req, res) => {
     res.json(updatedRestaurant);
   } catch (error) {
     res.status(400).json({ message: "Error while updating the restaurant" });
+  }
+});
+
+//update Rating
+router.patch("/restaurants/:id/rating", async (req, res) => {
+  const restaurantId = req.params.id;
+  console.log(restaurantId);
+  await Restaurant.findById(restaurantId)
+    .populate("reviewsId")
+    .then((restaurant) => {
+      const reviews = restaurant.reviewsId;
+      let ratingSum = 0;
+      reviews.forEach((review) => {
+        ratingSum += review.rating;
+      });
+      restaurantRating = ratingSum / reviews.length;
+      return restaurantRating;
+    })
+    .then((restaurantRating) => {
+      console.log(restaurantRating);
+      Restaurant.findByIdAndUpdate(restaurantId, { rating: restaurantRating });
+    })
+    .catch((error) => {
+      console.log(error);
+      res
+        .status(400)
+        .json({ message: "Error while retrieving the Restaurant's reviews" });
+    });
+  // try {
+  //   const review = req.body;
+  //   const restaurantId = req.params.id;
+  //   const updatedRating = await Restaurant.findByIdAndUpdate(
+  //     restaurantId,
+  //     rating,
+  //     { new: true }
+  //   );
+  //   res.json(updatedRating);
+  // } catch (error) {
+  //   res.status(400).json({ message: "Could not update the review" });
+  // }
+});
+
+//get Restaurant by Review
+router.get("/restaurants/:id/reviews", async (req, res) => {
+  const restaurantId = req.params.id;
+  console.log(restaurantId);
+  await Restaurant.findById(restaurantId)
+    .populate("reviewsId")
+    .then((restaurant) => res.json(restaurant.reviewsId))
+    .catch((error) => {
+      console.log(error);
+      res
+        .status(400)
+        .json({ message: "Error while retrieving the Restaurant's reviews" });
+    });
+});
+
+//Create Restaurant Endpoint
+router.post("/restaurants", async (req, res) => {
+  try {
+    const restaurantData = req.body;
+    if (!validateEmail(restaurantData.email)) {
+      res.status(400).json({ message: "Provide a valid email address." });
+      return;
+    }
+    if (!validatePhoneNumber(restaurantData.phoneNumber)) {
+      res.status(400).json({
+        message: "Phone number must be a valid german phone number.",
+      });
+      return;
+    }
+
+    const newRestaurant = await Restaurant.create(restaurantData);
+    res.status(201).json(newRestaurant);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error while creating a new Restaurant" });
   }
 });
 
