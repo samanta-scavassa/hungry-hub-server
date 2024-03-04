@@ -30,7 +30,7 @@ const restaurantSchema = new Schema({
         openingTime: { hour: {type: Number, required: true}, minute:{type: Number, default: 0}},
         closingTime:  { hour: {type: Number, required: true}, minute:{type: Number, default: 0}},
   },
-  rating: {type:Number, min:1, max:5},
+  rating: {type:Number, max:5, default: 0},
   reviewsId: [{ type: Schema.Types.ObjectId, ref: "Review" }],
   isActive: { type: Boolean, default: true },
 });

@@ -5,16 +5,17 @@ const { validatePhoneNumber, validateEmail } = require("../utils/validations");
 
 //getting all Restaurants Endpoint
 router.get("/restaurants", async (req, res) => {
-  // const rating = req.params.rating;
   try {
-    const restaurants = await Restaurant.find();
+    const { rating } = req.query;
+    let query = {};
+    if (rating !== "null") query.rating = rating;
 
-    if (restaurants.length === 0) {
-      return res.status(404).json({ message: "No restaurants found" });
-    }
+    console.log(query);
+    const restaurants = await Restaurant.find(query);
 
     res.json(restaurants);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ message: error.message });
   }
 });
