@@ -15,7 +15,7 @@ router.post("/reviews", async (req, res) => {
       },
       { new: true }
     );
-    await updateRating(updatedRestaurant._id); // No need to pass res here
+    await updateRating(updatedRestaurant._id);
 
     res.status(201).json(newReview);
   } catch (error) {
