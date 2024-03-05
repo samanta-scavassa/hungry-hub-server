@@ -6,13 +6,13 @@ const { validatePhoneNumber, validateEmail } = require("../utils/validations");
 //getting all Restaurants Endpoint
 router.get("/restaurants", async (req, res) => {
   try {
-    const { rating } = req.query;
+    const { rating, category } = req.query;
     let query = {};
-    if (rating !== "null") query.rating = rating;
+    if (rating !== "null") query.rating = {$gte: rating};
+    if(category !== "null") query.category = category;
+    console.log(query)
 
-    console.log(query);
     const restaurants = await Restaurant.find(query);
-
     res.json(restaurants);
   } catch (error) {
     console.log(error);
