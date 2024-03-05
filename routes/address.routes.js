@@ -6,10 +6,21 @@ const Address = require("../models/Address.model");
 router.post("/addresses", async (req, res) => {
   try {
     const addressData = req.body;
-
+    
     const newAddress = await Address.create(addressData);
-
+    
     res.status(201).json(newAddress);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Get Address by User ID Endpoint
+router.get("/addresses/user/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const addresses = await Address.find({ userId: userId });
+    res.json(addresses);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -45,16 +56,6 @@ router.get("/addresses/label/:label", async (req, res) => {
   }
 });
 
-// Get Address by User ID Endpoint
-router.get("/addresses/user/:userId", async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const addresses = await Address.find({ userId: userId });
-    res.json(addresses);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
 
 
 // Update address Endpoint
