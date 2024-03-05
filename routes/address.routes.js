@@ -50,7 +50,7 @@ router.get("/addresses/user/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
 
-    const addresses = await Address.find({ userId });
+    const addresses = await Address.find({ObjectId: userId });
 
     res.json(addresses);
   } catch (error) {
