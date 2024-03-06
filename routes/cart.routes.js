@@ -26,15 +26,16 @@ router.get("/carts/users/:userId", (req, res) => {
 router.post("/carts", (req, res) => {
   Cart.create(req.body)
     .then((cart) => res.status(201).json(cart))
-    .catch((error) =>
-      res.status(400).json({ message: "Error while creating the cart" })
-    );
+    .catch((error) => {
+      console.log(error);
+      res.status(400).json({ message: "Error while creating the cart" });
+    });
 });
 
 //Get cart by Restaurant
-router.get("/carts/restaurant/:restaurantId", (req, res) => {
+router.get("/carts/restaurants/:restaurantId", (req, res) => {
   const restaurantId = req.params.restaurantId;
-  Cart.findById(restaurantId)
+  Cart.find({ restaurantId: restaurantId })
     .then((carts) => res.json(carts))
     .catch((error) =>
       res

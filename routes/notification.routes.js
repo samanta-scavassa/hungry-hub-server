@@ -35,11 +35,11 @@ router.put("/notifications/:id", async (req, res) => {
   }
 });
 
-//Get Notification by Order id Endpoint
-router.get("/notifications/order/:orderId", async (req, res) => {
+//Get Notification by Cart id Endpoint
+router.get("/notifications/carts/:cartId", async (req, res) => {
   try {
-    const orderId = req.params.orderId;
-    const notification = await Notification.find({ orderId: orderId });
+    const cartId = req.params.cartId;
+    const notification = await Notification.find({ cartId: cartId });
     res.json(notification);
   } catch (error) {
     res.status(400).json({ message: "Error while getting the Notification" });
