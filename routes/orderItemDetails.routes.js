@@ -15,7 +15,9 @@ router.post("/order-items-details", (req, res) => {
         { new: true }
       );
     })
-    .then(res.status(201))
+    .then(() => {
+      res.status(201).json({ message: "Order item details created successfully" });
+    })
     .catch((error) => {
       res
         .status(400)
@@ -35,8 +37,20 @@ router.get("/order-items-details/:id", (req, res) => {
     );
 });
 
+//Get OrderItemDetails by cart id
+router.get("/order-items-details/cart/:id", (req, res) => {
+  const cartId = req.params.id;
+  OrderItemDetails.find({orderId: cartId})
+    .then((orderItemDetails) => res.json(orderItemDetails))
+    .catch((error) =>
+      res
+        .status(400)
+        .json({ message: "Error while getting the order item details by cart id" })
+    );
+});
+
 //Update OrderItemDetails by id
-router.put("/order-items-details/:id", (req, res) => {
+router.patch("/order-items-details/:id", (req, res) => {
   const orderItemDetailsId = req.params.id;
   OrderItemDetails.findByIdAndUpdate(orderItemDetailsId, req.body, {
     new: true,
@@ -54,7 +68,7 @@ router.delete("/order-items-details/:id", (req, res) => {
   const orderItemDetailsId = req.params.id;
   OrderItemDetails.findByIdAndDelete(orderItemDetailsId)
     .then(
-      res.json({ message: "Order Item Details have been deleted successfully" })
+      res.json({ message: "Order Item Details has been deleted successfully" })
     )
     .catch((error) => {
       res
