@@ -8,7 +8,7 @@ const userRouter = require("./routes/user.routes");
 const reviewRouter = require("./routes/review.routes");
 const restaurantRouter = require("./routes/restaurant.routes");
 const menuRouter = require("./routes/menu.routes");
-const cartRouter = require("./routes/Cart.routes");
+const cartRouter = require("./routes/cart.routes");
 const notificationRouter = require("./routes/notification.routes");
 const orderItemDetailsRouter = require("./routes/orderItemDetails.routes");
 
