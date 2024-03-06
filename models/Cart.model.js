@@ -20,6 +20,7 @@ const cartSchema = new Schema({
       "on delivery",
       "delivered",
     ],
+    default: "created",
   },
 });
 
