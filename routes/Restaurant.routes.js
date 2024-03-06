@@ -8,9 +8,9 @@ router.get("/restaurants", async (req, res) => {
   try {
     const { rating, category } = req.query;
     let query = {};
-    if (rating !== "null") query.rating = {$gte: rating};
-    if(category !== "null") query.category = category;
-    console.log(query)
+    if (rating !== "null") query.rating = { $gte: rating };
+    if (category !== "null") query.category = category;
+    console.log(query);
 
     const restaurants = await Restaurant.find(query);
     res.json(restaurants);
@@ -46,7 +46,6 @@ router.get("/restaurants/operating-hours", async (req, res) => {
 //get Restaurant by id Endpoint
 router.get("/restaurants/:id", async (req, res) => {
   try {
-    console.log("test");
     const restaurantId = req.params.id;
 
     const restaurant = await Restaurant.findById(restaurantId);
@@ -98,7 +97,7 @@ router.put("/restaurants/:id", async (req, res) => {
   }
 });
 
-//get Restaurant by Review
+//Get Restaurant by Review
 router.get("/restaurants/:id/reviews", async (req, res) => {
   const restaurantId = req.params.id;
   console.log(restaurantId);

@@ -6,11 +6,12 @@ const Address = require("../models/Address.model");
 router.post("/addresses", async (req, res) => {
   try {
     const addressData = req.body;
-    
+
     const newAddress = await Address.create(addressData);
-    
+
     res.status(201).json(newAddress);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ message: error.message });
   }
 });
@@ -56,8 +57,6 @@ router.get("/addresses/label/:label", async (req, res) => {
   }
 });
 
-
-
 // Update address Endpoint
 router.put("/addresses/:id", async (req, res) => {
   try {
@@ -68,8 +67,7 @@ router.put("/addresses/:id", async (req, res) => {
       new: true,
     });
 
-    res.json(updatedaddress
-);
+    res.json(updatedaddress);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
