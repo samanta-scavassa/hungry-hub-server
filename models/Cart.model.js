@@ -8,7 +8,7 @@ const cartSchema = new Schema({
   driverId: { type: Schema.Types.ObjectId, ref: "driver" },
   createdOn: { type: Date, default: Date.now },
   notificationIds: { type: [Schema.Types.ObjectId], ref: "notification" },
-  totalPrice: { type: Number, required: true },
+  totalPrice: { type: Number, default:0 },
   updatedOn: { type: Date, default: Date.now },
   orderStatus: {
     type: String,
