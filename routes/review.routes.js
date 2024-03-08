@@ -88,7 +88,6 @@ const updateRating = async (restaurantId, res) => {
       const reviews = restaurant.reviewsId;
       let ratingSum = 0;
       let restaurantRating = 0;
-      console.log("reviews length: ", reviews.length)
       if (reviews.length) {
         reviews.forEach((review) => {
           ratingSum += review.rating;

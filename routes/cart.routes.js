@@ -44,4 +44,16 @@ router.get("/carts/restaurants/:restaurantId", (req, res) => {
     );
 });
 
+//Delete cart
+router.delete("/carts/:id", (req, res) => {
+  const cartId = req.params.id;
+  Cart.findByIdAndDelete(cartId)
+    .then((carts) => res.json({message: "Cart deleted successfully"}))
+    .catch((error) =>
+      res
+        .status(400)
+        .json({ message: "Error while getting the restaurant carts" })
+    );
+});
+
 module.exports = router;
