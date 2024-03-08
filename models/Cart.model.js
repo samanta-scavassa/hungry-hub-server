@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const cartSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: "user" },
   restaurantId: { type: Schema.Types.ObjectId, ref: "restaurant" },
-  orderItemDetailsId: { type: Schema.Types.ObjectId, ref: "orderItemDetails" },
+  orderItemDetailsId: { type: [Schema.Types.ObjectId], ref: "orderItemDetails" },
   driverId: { type: Schema.Types.ObjectId, ref: "driver" },
   createdOn: { type: Date, default: Date.now },
   notificationIds: { type: [Schema.Types.ObjectId], ref: "notification" },
