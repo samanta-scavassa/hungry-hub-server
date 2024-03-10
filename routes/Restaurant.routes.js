@@ -117,6 +117,7 @@ router.post("/restaurants", async (req, res) => {
   try {
     const restaurantData = req.body;
     if (!validateEmail(restaurantData.email)) {
+      console.log("email !!!!", restaurantData);
       res.status(400).json({ message: "Provide a valid email address." });
       return;
     }
