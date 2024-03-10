@@ -6,10 +6,16 @@ const User = require("../models/User.model");
 
 const router = express.Router();
 const { isAuthenticated } = require("../middlewares/jwt.middleware");
+const {
+  validatePassword,
+  validatePhoneNumber,
+  validateEmail,
+} = require("../utils/validations");
 const saltRounds = 10;
 
 router.post("/signup", (req, res, next) => {
-  const { email, password, fullName, phoneNumber, dateOfBirth } = req.body;
+  const { email, password, fullName, phoneNumber, dateOfBirth, roleId } =
+    req.body;
 
   if (
     email === "" ||
@@ -24,26 +30,21 @@ router.post("/signup", (req, res, next) => {
     return;
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-  if (!emailRegex.test(email)) {
+  if (!validateEmail(email)) {
     res.status(400).json({ message: "Provide a valid email address." });
     return;
   }
-
-  const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
-  if (!passwordRegex.test(password)) {
+  if (!validatePhoneNumber(phoneNumber)) {
     res.status(400).json({
-      message:
-        "Password must have at least 6 characters and contain at least one number, one lowercase and one uppercase letter.",
+      message: "Phone number must be a valid german phone number.",
     });
     return;
   }
 
-  const germanNumberRegex =
-    /(\(?([\d \-\)\–\+\/\(]+){6,}\)?([ .\-–\/]?)([\d]+))/;
-  if (!germanNumberRegex.test(phoneNumber)) {
+  if (!validatePassword(password)) {
     res.status(400).json({
-      message: "Phone number must be a valid german phone number.",
+      message:
+        "Password must have at least 6 characters and contain at least one number, one lowercase and one uppercase letter.",
     });
     return;
   }
@@ -57,20 +58,20 @@ router.post("/signup", (req, res, next) => {
 
       const salt = bcrypt.genSaltSync(saltRounds);
       const hashedPassword = bcrypt.hashSync(password, salt);
-      const customerRoleId = "65de3d32f96753f2845107c5";
       return User.create({
         fullName,
         email,
         phoneNumber,
         dateOfBirth,
         password: hashedPassword,
-        roleId: customerRoleId,
+        roleId,
       });
     })
     .then((createdUser) => {
-      const { email, fullName, phoneNumber, dateOfBirth, _id } = createdUser;
+      const { email, fullName, phoneNumber, dateOfBirth, roleId, _id } =
+        createdUser;
 
-      const user = { email, fullName, phoneNumber, dateOfBirth, _id };
+      const user = { email, fullName, phoneNumber, dateOfBirth, roleId, _id };
 
       res.status(201).json({ user: user });
     })
@@ -98,15 +99,23 @@ router.post("/login", (req, res, next) => {
       const passwordCorrect = bcrypt.compareSync(password, foundUser.password);
 
       if (passwordCorrect) {
-        const { _id, email, fullName, phoneNumber, dateOfBirth } = foundUser;
+        const { _id, email, fullName, phoneNumber, dateOfBirth, roleId } =
+          foundUser;
 
-        const payload = { _id, email, fullName, phoneNumber, dateOfBirth };
+        const payload = {
+          _id,
+          email,
+          fullName,
+          phoneNumber,
+          dateOfBirth,
+          roleId,
+        };
 
         const authToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
           algorithm: "HS256",
           expiresIn: "6h",
         });
-
+        console.log("test");
         res.status(200).json({ authToken: authToken });
       } else {
         res.status(401).json({ message: "Unable to authenticate the user" });

@@ -1,14 +1,25 @@
 const express = require("express");
 const router = express.Router();
 const Review = require("../models/Review.model");
+const Restaurant = require("../models/Restaurant.model");
 
 //Create a new review
-
 router.post("/reviews", async (req, res) => {
   try {
     const newReview = await Review.create(req.body);
+    const restaurantId = newReview.restaurantId;
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(
+      restaurantId,
+      {
+        $push: { reviewsId: newReview._id },
+      },
+      { new: true }
+    );
+    await updateRating(updatedRestaurant._id);
+
     res.status(201).json(newReview);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ message: "Error while creating new Review" });
   }
 });
@@ -19,12 +30,12 @@ router.put("/reviews/:id", async (req, res) => {
   try {
     const reviewId = req.params.id;
 
-    const uptadedReview = await Review.findByIdAndUpdate(reviewId, req.body, {
+    const updatedReview = await Review.findByIdAndUpdate(reviewId, req.body, {
       new: true,
     });
     res.json(updatedReview);
   } catch (error) {
-    res.status(400).json({ message: "Error while updating the Review" });
+    res.status(500).json({ message: "Error while updating the Review" });
   }
 });
 
@@ -46,10 +57,10 @@ router.get("/reviews/:id", async (req, res) => {
 
 //Get reviews by restaurant
 
-router.get("/reviews/restaurants/:id", async (req, res) => {
+router.get("/reviews/restaurant/:id", async (req, res) => {
   try {
     const restaurantId = req.params.restaurantId;
-    const reviews = await Review.find({ restaurantId });
+    const reviews = await Review.find({ ObjectId: restaurantId });
     res.json(reviews);
   } catch (error) {
     res
@@ -70,4 +81,33 @@ router.delete("/reviews/:id", async (req, res) => {
   }
 });
 
+const updateRating = async (restaurantId, res) => {
+  await Restaurant.findById(restaurantId)
+    .populate("reviewsId")
+    .then((restaurant) => {
+      const reviews = restaurant.reviewsId;
+      let ratingSum = 0;
+      let restaurantRating = 0;
+      if (reviews.length) {
+        reviews.forEach((review) => {
+          ratingSum += review.rating;
+        });
+        restaurantRating = ratingSum / reviews.length;
+      }
+      return restaurantRating;
+    })
+    .then(async (restaurantRating) => {
+      console.log(restaurantRating);
+      updatedRestaurant = await Restaurant.findByIdAndUpdate(
+        restaurantId,
+        { rating: restaurantRating },
+        { new: true }
+      );
+    })
+    .catch((error) => {
+      res
+        .status(400)
+        .json({ message: "Error while updating the Restaurant's reviews" });
+    });
+};
 module.exports = router;

@@ -11,6 +11,18 @@ router.post("/addresses", async (req, res) => {
 
     res.status(201).json(newAddress);
   } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Get Address by User ID Endpoint
+router.get("/addresses/user/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const addresses = await Address.find({ userId: userId });
+    res.json(addresses);
+  } catch (error) {
     res.status(400).json({ message: error.message });
   }
 });
@@ -45,19 +57,6 @@ router.get("/addresses/label/:label", async (req, res) => {
   }
 });
 
-// Get Address by User ID Endpoint
-router.get("/addresses/user/:userId", async (req, res) => {
-  try {
-    const userId = req.params.userId;
-
-    const addresses = await Address.find({ userId });
-
-    res.json(addresses);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
 // Update address Endpoint
 router.put("/addresses/:id", async (req, res) => {
   try {
@@ -68,8 +67,7 @@ router.put("/addresses/:id", async (req, res) => {
       new: true,
     });
 
-    res.json(updatedaddress
-);
+    res.json(updatedaddress);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
