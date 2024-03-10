@@ -19,7 +19,7 @@ module.exports = (app) => {
 
   app.use(
     cors({
-      origin: ["https://samanta-scavassa.github.io/hungry-hub"],
+      origin: ["https://samanta-scavassa.github.io"],
     })
   );
 
