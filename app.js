@@ -6,7 +6,7 @@ require("./config")(app);
 const addressRouter = require("./routes/address.routes");
 const userRouter = require("./routes/user.routes");
 const reviewRouter = require("./routes/review.routes");
-const restaurantRouter = require("./routes/restaurant.routes");
+const restaurantRouter = require("./routes/Restaurant.routes");
 const menuRouter = require("./routes/menu.routes");
 const cartRouter = require("./routes/cart.routes");
 const notificationRouter = require("./routes/notification.routes");
