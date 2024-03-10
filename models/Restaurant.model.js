@@ -8,7 +8,7 @@ const restaurantSchema = new Schema({
   phoneNumber: { type: String, required: true },
   category: { type: String },
   description: { type: String },
-  // image: { type: String },
+  image: { type: String },
   longitude: { type: Number },
   latitude: { type: Number },
   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
